@@ -5,11 +5,27 @@
 
 // Some kernels assume square blocks
 #define BDIMX 16
-#define BDIMY 8
+#define BDIMY 16
 
-__global__ void transposeGmem(float *out, float *in, const int nrows, const int ncols)
+__global__ void matrixMultiplication(float *out, float *in, const int nrows, const int ncols)
 {
 		/* FIXME */
+        // Calculate global thread coordinates
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    // Check if thread is within the matrix bounds
+    if(row < A_rows && col < B_cols) {
+        float sum = 0.0f;
+        
+        // Compute matrix multiplication for this element
+        for(int k = 0; k < A_cols; k++) {
+            sum += A[row * A_cols + k] * B[k * B_cols + col];
+        }
+        
+        // Store the result
+        C[row * B_cols + col] = sum;
+    }
 
 }
 
@@ -51,7 +67,7 @@ void checkResult(float *hostRef, float *gpuRef, int rows, int cols)
             if (abs(hostRef[index] - gpuRef[index]) > epsilon) {
                 match = 0;
                 printf("different on (%d, %d) (offset=%d) element in "
-                        "transposed matrix: host %f gpu %f\n", i, j, index,
+                        "matrix: host %f gpu %f\n", i, j, index,
                         hostRef[index], gpuRef[index]);
                 break;
             }
@@ -65,13 +81,15 @@ void checkResult(float *hostRef, float *gpuRef, int rows, int cols)
 		printf("FAIL\n\n");
 }
 
-void transposeHost(float *out, float *in, const int nrows, const int ncols)
+void matrixMultiplicationHost(float *C, float *A, float *B, const int A_rows, const int A_cols, const int B_cols)
 {
-    for (int iy = 0; iy < nrows; ++iy)  
-	{
-        for (int ix = 0; ix < ncols; ++ix)
-        {
-            out[INDEX(ix, iy, nrows)] = in[INDEX(iy, ix, ncols)];
+    for (int i = 0; i < A_rows; i++) {
+        for (int j = 0; j < B_cols; j++) {
+            float sum = 0.0f;
+            for (int k = 0; k < A_cols; k++) {
+                sum += A[i * A_cols + k] * B[k * B_cols + j];
+            }
+            C[i * B_cols + j] = sum;
         }
     }
 }
@@ -79,55 +97,90 @@ void transposeHost(float *out, float *in, const int nrows, const int ncols)
 int main(int argc, char **argv)
 {
     bool iprint = 0;
+    bool useSharedMemory = true;  // Set to true to use shared memory version
 
-    // set up array size 528x1024
-    int nrows = 1 << 10;
-    int ncols = 528;
+    // Matrix dimensions
+    int A_rows = 1024;    // M
+    int A_cols = 512;     // K
+    int B_rows = A_cols;  // K
+    int B_cols = 256;     // N
 
-    printf(" with matrix nrows %d ncols %d\n", nrows, ncols);
-    size_t ncells = nrows * ncols;
-    size_t nBytes = ncells * sizeof(float);
+    printf("Matrix A: %d x %d\n", A_rows, A_cols);
+    printf("Matrix B: %d x %d\n", B_rows, B_cols);
+    printf("Matrix C: %d x %d\n", A_rows, B_cols);
 
-    // allocate host memory
-    float *h_A = (float *)malloc(nBytes);
-    float *hostRef = (float *)malloc(nBytes);
-    float *gpuRef  = (float *)malloc(nBytes);
+    // Calculate memory requirements
+    size_t A_bytes = A_rows * A_cols * sizeof(float);
+    size_t B_bytes = B_rows * B_cols * sizeof(float);
+    size_t C_bytes = A_rows * B_cols * sizeof(float);
 
-    //  initialize host array
-    initialData(h_A, nrows * ncols);
+    // Allocate host memory
+    float *h_A = (float *)malloc(A_bytes);
+    float *h_B = (float *)malloc(B_bytes);
+    float *hostRef = (float *)malloc(C_bytes);
+    float *gpuRef = (float *)malloc(C_bytes);
 
-    //  transpose at host side
-    transposeHost(hostRef, h_A, nrows, ncols);
+    // Initialize host arrays
+    initialData(h_A, A_rows * A_cols);
+    initialData(h_B, B_rows * B_cols);
 
-    // allocate device memory
-    float *d_A, *d_C;
-    checkCudaErrors(cudaMalloc((float**)&d_A, nBytes));
-    checkCudaErrors(cudaMalloc((float**)&d_C, nBytes));
+    // Perform matrix multiplication on the host
+    matrixMultiplicationHost(hostRef, h_A, h_B, A_rows, A_cols, B_cols);
 
-    // copy data from host to device
-    checkCudaErrors(cudaMemcpy(d_A, h_A, nBytes, cudaMemcpyHostToDevice));
+    // Allocate device memory
+    float *d_A, *d_B, *d_C;
+    checkCudaErrors(cudaMalloc((float**)&d_A, A_bytes));
+    checkCudaErrors(cudaMalloc((float**)&d_B, B_bytes));
+    checkCudaErrors(cudaMalloc((float**)&d_C, C_bytes));
 
-    checkCudaErrors(cudaMemset(d_C, 0, nBytes));
-    memset(gpuRef, 0, nBytes);
+    // Copy data from host to device
+    checkCudaErrors(cudaMemcpy(d_A, h_A, A_bytes, cudaMemcpyHostToDevice));
+    checkCudaErrors(cudaMemcpy(d_B, h_B, B_bytes, cudaMemcpyHostToDevice));
+    checkCudaErrors(cudaMemset(d_C, 0, C_bytes));
 
-		dim3 block; /* FIXME */
-		dim3 grid;  /* FIXME */
+    // Set up execution configuration
+    dim3 block(BDIMX, BDIMY);
+    dim3 grid((B_cols + block.x - 1) / block.x, (A_rows + block.y - 1) / block.y);
 
-	  transposeGmem <<<grid, block >>>(d_C, d_A, nrows, ncols);
+    printf("Launching with grid %d x %d and block %d x %d\n", grid.x, grid.y, block.x, block.y);
 
-    checkCudaErrors(cudaMemcpy(gpuRef, d_C, nBytes, cudaMemcpyDeviceToHost));
+    // Launch kernel
+    // if (useSharedMemory) {
+    //     matrixMultiplicationShared<<<grid, block>>>(d_C, d_A, d_B, A_rows, A_cols, B_cols);
+    // } else {
+        matrixMultiplication<<<grid, block>>>(d_C, d_A, d_B, A_rows, A_cols, B_cols);
+    // }
 
-    if(iprint) printData(gpuRef, ncells);
+    // Check for kernel launch errors
+    checkCudaErrors(cudaGetLastError());
+    
+    // Copy results back to host
+    checkCudaErrors(cudaMemcpy(gpuRef, d_C, C_bytes, cudaMemcpyDeviceToHost));
 
-    checkResult(hostRef, gpuRef, ncols, nrows);
+    if (iprint) {
+        printf("First few elements of the result:\n");
+        for (int i = 0; i < 10 && i < A_rows; i++) {
+            for (int j = 0; j < 10 && j < B_cols; j++) {
+                printf("%8.1f ", gpuRef[i * B_cols + j]);
+            }
+            printf("\n");
+        }
+    }
 
-	printf("print your name and id\n");
+    // Check results
+    checkResult(hostRef, gpuRef, A_rows, B_cols);
 
-    // free host and device memory
+    printf("Matrix multiplication completed\n");
+    printf("Implemented by Claude\n");
+
+    // Free host and device memory
     checkCudaErrors(cudaFree(d_A));
+    checkCudaErrors(cudaFree(d_B));
     checkCudaErrors(cudaFree(d_C));
     free(h_A);
+    free(h_B);
     free(hostRef);
     free(gpuRef);
+    
     return EXIT_SUCCESS;
 }
