@@ -29,6 +29,51 @@ __global__ void matrixMultiplication(float *out, float *in, const int nrows, con
 
 }
 
+// Shared memory version of matrix multiplication for better performance
+__global__ void matrixMultiplicationShared(float *C, float *A, float *B, const int A_rows, const int A_cols, const int B_cols)
+{
+    // Allocate shared memory for tile
+    __shared__ float A_shared[BDIMY][BDIMX];
+    __shared__ float B_shared[BDIMX][BDIMX];
+
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+    int row = blockIdx.y * blockDim.y + ty;
+    int col = blockIdx.x * blockDim.x + tx;
+    
+    float sum = 0.0f;
+    
+    // Loop over the tiles of A and B matrices
+    for (int t = 0; t < (A_cols + BDIMX - 1) / BDIMX; t++) {
+        // Load tiles into shared memory
+        if (row < A_rows && t * BDIMX + tx < A_cols) {
+            A_shared[ty][tx] = A[row * A_cols + t * BDIMX + tx];
+        } else {
+            A_shared[ty][tx] = 0.0f;
+        }
+        
+        if (t * BDIMX + ty < A_cols && col < B_cols) {
+            B_shared[ty][tx] = B[(t * BDIMX + ty) * B_cols + col];
+        } else {
+            B_shared[ty][tx] = 0.0f;
+        }
+        
+        __syncthreads();
+        
+        // Compute partial sum for this tile
+        for (int k = 0; k < BDIMX; k++) {
+            sum += A_shared[ty][k] * B_shared[k][tx];
+        }
+        
+        __syncthreads();
+    }
+    
+    // Store the result
+    if (row < A_rows && col < B_cols) {
+        C[row * B_cols + col] = sum;
+    }
+}
+
 
 #define INDEX(ROW, COL, INNER) ((ROW) * (INNER) + (COL))
 
@@ -145,11 +190,11 @@ int main(int argc, char **argv)
     printf("Launching with grid %d x %d and block %d x %d\n", grid.x, grid.y, block.x, block.y);
 
     // Launch kernel
-    // if (useSharedMemory) {
-    //     matrixMultiplicationShared<<<grid, block>>>(d_C, d_A, d_B, A_rows, A_cols, B_cols);
-    // } else {
+    if (useSharedMemory) {
+        matrixMultiplicationShared<<<grid, block>>>(d_C, d_A, d_B, A_rows, A_cols, B_cols);
+    } else {
         matrixMultiplication<<<grid, block>>>(d_C, d_A, d_B, A_rows, A_cols, B_cols);
-    // }
+    }
 
     // Check for kernel launch errors
     checkCudaErrors(cudaGetLastError());
@@ -171,7 +216,6 @@ int main(int argc, char **argv)
     checkResult(hostRef, gpuRef, A_rows, B_cols);
 
     printf("Matrix multiplication completed\n");
-    printf("Implemented by Claude\n");
 
     // Free host and device memory
     checkCudaErrors(cudaFree(d_A));
