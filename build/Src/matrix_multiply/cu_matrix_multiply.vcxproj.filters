@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="H:\matrix-multiply-pybind\Src\matrix_multiply\pybind11mm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="H:\matrix-multiply-pybind\Src\matrix_multiply\mm.cu">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="H:\matrix-multiply-pybind\build\CMakeFiles\62e8c58d58d037e1d8fefa21bac149f6\cu_matrix_multiply_intermediate_link.obj.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="H:\matrix-multiply-pybind\Src\matrix_multiply\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="H:\matrix-multiply-pybind\build\Src\matrix_multiply\CMakeFiles\cu_matrix_multiply.dir\$(Configuration)\cu_matrix_multiply_generated_mm.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="H:\matrix-multiply-pybind\build\Src\matrix_multiply\CMakeFiles\cu_matrix_multiply.dir\$(Configuration)\cu_matrix_multiply_intermediate_link.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{FC4CAE6A-68E5-3197-81A0-681A3F86D6E6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Files">
+      <UniqueIdentifier>{00D325C7-F16F-3F4F-9005-265851561107}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{8014AD86-89CA-31EE-81DB-C5DA497DE4D8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

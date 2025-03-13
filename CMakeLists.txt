@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.12)
 project(MatrixMultiply)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
@@ -24,8 +24,11 @@ set(CUDA_SEPARABLE_COMPILATION ON)
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-lnvToolExt -gencode arch=compute_52,code=sm_52)
 
 if (WINDOWS)
+
+option(BUILD_THIRDPARTY "Enable third-party dependencies" ON)
+
 set(CUDA_TOOLKIT_SAMPLES_DIR "C:/ProgramData/NVIDIA Corporation/CUDA Samples/v10.1")
-add_definitions(-DBUILD_THIRDPARTY:BOOL=ON)
+add_definitions(-DBUILD_THIRDPARTY=1)
 else (WINDOWS)
 
 include(CheckCXXCompilerFlag)
@@ -43,11 +46,20 @@ set(CUDA_TOOLKIT_SAMPLES_DIR ${CUDA_TOOLKIT_ROOT_DIR}/samples)
 set(CUDA_TOOLKIT_ROOT_DIR ${CUDA_TOOLKIT_ROOT_DIR})
 endif(WINDOWS)
 ###################################################################
+
+find_package(PythonInterp 3.6 REQUIRED)
+find_package(PythonLibs   3.6 REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
+find_package(PyBind11 REQUIRED)
+
 find_package( NVTX REQUIRED )
 #find_package( NVML REQUIRED )
-#find_package( GLEW REQUIRED )
+find_package( GLEW REQUIRED )
 find_package( FREEGLUT REQUIRED )
 #set(BUILD_THIRDPARTY ON)
+
+#option(BUILD_THIRDPARTY "Enable third-party dependencies" ON)
 
 #add_subdirectory (thirdparty)
 add_subdirectory (Src)

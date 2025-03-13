@@ -1,0 +1,57 @@
+﻿  Building NVCC (Device) object Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir/Debug/cu_matrix_multiply_generated_mm.cu.obj
+  mm.cu
+CUSTOMBUILD : nvcc warning : '--device-debug (-G)' overrides '--generate-line-info (-lineinfo)'
+CUSTOMBUILD : ptxas warning : Conflicting options --device-debug and --generate-line-info specified, ignoring --generate-line-info option
+  ptxas info    : 0 bytes gmem
+  ptxas info    : Compiling entry function '_Z20matrixMultiplicationPfS_S_iii' for 'sm_52'
+  ptxas info    : Function properties for _Z20matrixMultiplicationPfS_S_iii
+      0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+  ptxas info    : Used 28 registers, 2176 bytes smem, 356 bytes cmem[0]
+CUSTOMBUILD : nvcc warning : '--device-debug (-G)' overrides '--generate-line-info (-lineinfo)'
+  mm.cu
+  Building Custom Rule H:/matrix-multiply-pybind/Src/matrix_multiply/CMakeLists.txt
+  CMake is re-running because H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/generate.stamp is out-of-date.
+    the file 'H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir/cu_matrix_multiply_generated_mm.cu.obj.depend'
+    is newer than 'H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/generate.stamp.depend'
+    result='-1'
+  -- Selecting Windows SDK version 10.0.22000.0 to target Windows 10.0.19045.
+  Windows
+  64
+  CMake Warning (dev) at CMakeLists.txt:22 (find_package):
+    Policy CMP0146 is not set: The FindCUDA module is removed.  Run "cmake
+    --help-policy CMP0146" for policy details.  Use the cmake_policy command to
+    set the policy and suppress this warning.
+  
+  This warning is for project developers.  Use -Wno-dev to suppress it.
+  
+  CMake Warning (dev) at CMakeLists.txt:50 (find_package):
+    Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+    are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+    the cmake_policy command to set the policy and suppress this warning.
+  
+  This warning is for project developers.  Use -Wno-dev to suppress it.
+  
+  CMake Warning (dev) at CMakeLists.txt:51 (find_package):
+    Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+    are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+    the cmake_policy command to set the policy and suppress this warning.
+  
+  This warning is for project developers.  Use -Wno-dev to suppress it.
+  
+  -- Found NVTX: C:/Program Files/NVIDIA Corporation/NvToolsExt/include
+  -- Found GLEW: C:/ProgramData/NVIDIA Corporation/CUDA Samples/v10.1/common/lib/x64/glew64.lib
+  -- Found FREEGLUT: C:/ProgramData/NVIDIA Corporation/CUDA Samples/v10.1/common/lib/x64/freeglut.lib
+  -- Configuring done (0.3s)
+  -- Generating done (0.3s)
+  -- Build files have been written to: H:/matrix-multiply-pybind/build
+  Building NVCC intermediate link file Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir/Debug/cu_matrix_multiply_intermediate_link.obj
+  cu_matrix_multiply_generated_mm.cu.obj
+  pybind11mm.cpp
+H:\matrix-multiply-pybind\Src\matrix_multiply\pybind11mm.cpp(21,13): warning C4244: 'initializing': conversion from 'const pybind11::ssize_t' to 'int', possible loss of data
+H:\matrix-multiply-pybind\Src\matrix_multiply\pybind11mm.cpp(22,13): warning C4244: 'initializing': conversion from 'const pybind11::ssize_t' to 'int', possible loss of data
+H:\matrix-multiply-pybind\Src\matrix_multiply\pybind11mm.cpp(23,13): warning C4244: 'initializing': conversion from 'const pybind11::ssize_t' to 'int', possible loss of data
+     Creating library H:/matrix-multiply-pybind/build/Src/matrix_multiply/Debug/cu_matrix_multiply.lib and object H:/matrix-multiply-pybind/build/Src/matrix_multiply/Debug/cu_matrix_multiply.exp
+  Generating code
+  Not all modules are compiled with -Gy (function comdat), build without incremental LTCG.
+  Finished generating code
+  cu_matrix_multiply.vcxproj -> H:\matrix-multiply-pybind\build\Src\matrix_multiply\Debug\cu_matrix_multiply.pyd

@@ -1,0 +1,16 @@
+﻿  Building NVCC (Device) object Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir/Release/cu_matrix_multiply_generated_mm.cu.obj
+  mm.cu
+  mm.cu
+  Building Custom Rule H:/matrix-multiply-pybind/Src/matrix_multiply/CMakeLists.txt
+  Building NVCC intermediate link file Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir/Release/cu_matrix_multiply_intermediate_link.obj
+  cu_matrix_multiply_generated_mm.cu.obj
+  pybind11mm.cpp
+H:\matrix-multiply-pybind\Src\matrix_multiply\pybind11mm.cpp(21,13): warning C4244: 'initializing': conversion from 'const pybind11::ssize_t' to 'int', possible loss of data
+H:\matrix-multiply-pybind\Src\matrix_multiply\pybind11mm.cpp(22,13): warning C4244: 'initializing': conversion from 'const pybind11::ssize_t' to 'int', possible loss of data
+H:\matrix-multiply-pybind\Src\matrix_multiply\pybind11mm.cpp(23,13): warning C4244: 'initializing': conversion from 'const pybind11::ssize_t' to 'int', possible loss of data
+     Creating library H:/matrix-multiply-pybind/build/Src/matrix_multiply/Release/cu_matrix_multiply.lib and object H:/matrix-multiply-pybind/build/Src/matrix_multiply/Release/cu_matrix_multiply.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 2065 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  cu_matrix_multiply.vcxproj -> H:\matrix-multiply-pybind\build\Src\matrix_multiply\Release\cu_matrix_multiply.pyd
