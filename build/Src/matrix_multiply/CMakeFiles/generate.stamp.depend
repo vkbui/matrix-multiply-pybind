@@ -1,0 +1,5 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.31/Modules/FindCUDA/run_nvcc.cmake
+H:/matrix-multiply-pybind/Src/matrix_multiply/CMakeLists.txt
+H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir/cu_matrix_multiply_generated_mm.cu.obj.cmake.pre-gen
+H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir/cu_matrix_multiply_generated_mm.cu.obj.depend

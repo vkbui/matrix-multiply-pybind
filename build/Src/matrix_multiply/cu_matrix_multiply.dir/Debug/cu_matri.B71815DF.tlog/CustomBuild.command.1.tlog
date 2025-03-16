@@ -1,0 +1,36 @@
+^H:\MATRIX-MULTIPLY-PYBIND\SRC\MATRIX_MULTIPLY\MM.CU
+setlocal
+cd H:\matrix-multiply-pybind\build\Src\matrix_multiply\CMakeFiles\cu_matrix_multiply.dir
+if %errorlevel% neq 0 goto :cmEnd
+H:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir//Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.29.30133/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D generated_file:STRING=H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir//Debug/cu_matrix_multiply_generated_mm.cu.obj -D generated_cubin_file:STRING=H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir//Debug/cu_matrix_multiply_generated_mm.cu.obj.cubin.txt -P H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir//cu_matrix_multiply_generated_mm.cu.obj.Debug.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^H:\MATRIX-MULTIPLY-PYBIND\BUILD\CMAKEFILES\62E8C58D58D037E1D8FEFA21BAC149F6\CU_MATRIX_MULTIPLY_INTERMEDIATE_LINK.OBJ.RULE
+setlocal
+"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6\bin\nvcc.exe" -lnvToolExt -gencode arch=compute_52,code=sm_52 --cudart=shared -DWITH_OPENGL -DOPTIMIZATION_STEP=0x0 -lineinfo -arch sm_52 -use_fast_math -maxrregcount 104 -m64 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.29.30133/bin/Hostx64/x64" -dlink H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir//Debug/cu_matrix_multiply_generated_mm.cu.obj -o H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/cu_matrix_multiply.dir/Debug/cu_matrix_multiply_intermediate_link.obj -Xcompiler /MDd
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^H:\MATRIX-MULTIPLY-PYBIND\SRC\MATRIX_MULTIPLY\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SH:/matrix-multiply-pybind -BH:/matrix-multiply-pybind/build --check-stamp-file H:/matrix-multiply-pybind/build/Src/matrix_multiply/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

@@ -1,0 +1,10 @@
+^H:\MATRIX-MULTIPLY-PYBIND\BUILD\CMAKEFILES\31FB93F586293929DD02C6CF4A397122\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SH:/matrix-multiply-pybind -BH:/matrix-multiply-pybind/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file H:/matrix-multiply-pybind/build/MatrixMultiply.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

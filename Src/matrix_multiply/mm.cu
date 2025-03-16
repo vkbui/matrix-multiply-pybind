@@ -126,7 +126,80 @@ void matrixMultiplicationHost(float* C, float* A, float* B, const int A_rows, co
     }
 }
 
-int main(int argc, char** argv)
+void cu_matrixMultiply(float* A, float* B, float* C, int A_rows, int A_cols, int B_cols)
+{
+
+    int B_rows = A_cols;
+    
+    printf("Matrix A: %d x %d\n", A_rows, A_cols);
+    printf("Matrix B: %d x %d\n", B_rows, B_cols);
+    printf("Matrix C: %d x %d\n", A_rows, B_cols);
+
+    size_t A_bytes = A_rows * A_cols * sizeof(float);
+    size_t B_bytes = B_rows * B_cols * sizeof(float);
+    size_t C_bytes = A_rows * B_cols * sizeof(float);
+
+    // calculate per-stream sizes 
+    int rows_per_stream = A_rows / NUM_STREAMS;
+    size_t A_bytes_per_stream = rows_per_stream * A_cols * sizeof(float);
+    size_t C_bytes_per_stream = rows_per_stream * B_cols * sizeof(float);
+
+    //float* h_A, * h_B;
+
+    // pinned memory for streams
+    //checkCudaErrors(cudaHostAlloc((void**)&h_A, A_bytes, cudaHostAllocDefault));
+    //checkCudaErrors(cudaHostAlloc((void**)&h_B, B_bytes, cudaHostAllocDefault));
+    //checkCudaErrors(cudaHostAlloc((void**)&gpuRef, C_bytes, cudaHostAllocDefault));
+
+
+    cudaStream_t streams[NUM_STREAMS];
+    for (int i = 0; i < NUM_STREAMS; i++) {
+        checkCudaErrors(cudaStreamCreate(&streams[i]));
+    }
+
+    float* d_A, * d_B, * d_C;
+    checkCudaErrors(cudaMalloc((float**)&d_A, A_bytes));
+    checkCudaErrors(cudaMalloc((float**)&d_B, B_bytes));
+    checkCudaErrors(cudaMalloc((float**)&d_C, C_bytes));
+
+    // copy matrix B to device since used by all streams
+    checkCudaErrors(cudaMemcpy(d_B, B, B_bytes, cudaMemcpyHostToDevice));
+
+    dim3 block(BDIMX, BDIMY);
+    dim3 grid_segment((B_cols + block.x - 1) / block.x, (A_rows + block.y - 1) / block.y);
+
+    for (int i = 0; i < NUM_STREAMS; i++) {
+        size_t A_offset = i * rows_per_stream * A_cols;
+        size_t C_offset = i * rows_per_stream * B_cols;
+
+        // copy segment of A from host to device
+        checkCudaErrors(cudaMemcpyAsync(&d_A[A_offset], &A[A_offset], A_bytes_per_stream, cudaMemcpyHostToDevice, streams[i]));
+
+        // call kernel
+        matrixMultiplication <<<grid_segment, block, 0, streams[i] >> > (&d_C[C_offset], &d_A[A_offset], d_B, rows_per_stream, A_cols, B_cols);
+
+        // copy segment of C back to host
+        checkCudaErrors(cudaMemcpyAsync(&C[C_offset], &d_C[C_offset], C_bytes_per_stream, cudaMemcpyDeviceToHost, streams[i]));
+    }
+
+    // synchronize streams
+    for (int i = 0; i < NUM_STREAMS; i++) {
+        checkCudaErrors(cudaStreamSynchronize(streams[i]));
+    }
+
+    //cudaMemcpyFromSymbol(&out, d_, C_bytes);
+    // Free device memory
+    checkCudaErrors(cudaFree(d_A));
+    checkCudaErrors(cudaFree(d_B));
+    checkCudaErrors(cudaFree(d_C));
+
+    /*checkCudaErrors(cudaFreeHost(h_A));
+    checkCudaErrors(cudaFreeHost(h_B));
+    checkCudaErrors(cudaFreeHost(gpuRef));
+    return out;*/
+}
+
+int main(int argc, char **argv)
 {
     // matrix dimensions
     int A_rows = 1024;

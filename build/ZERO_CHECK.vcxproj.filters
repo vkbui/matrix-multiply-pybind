@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="H:\matrix-multiply-pybind\build\CMakeFiles\31fb93f586293929dd02c6cf4a397122\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{FC4CAE6A-68E5-3197-81A0-681A3F86D6E6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
