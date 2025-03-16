@@ -24,12 +24,12 @@ py::array_t<float> mm_wrapper(py::array_t<float> a1, py::array_t<float> a2)
 	//printf("A_rows=%d, A_cols=%d\n, B_cols=%d", A_rows, A_cols, B_cols);
 
 	auto result = py::array(py::buffer_info(
-		nullptr,            /* Pointer to data (nullptr -> ask NumPy to allocate!) */
-		sizeof(float),     /* Size of one item */
-		py::format_descriptor<float>::value, /* Buffer format */
-		buf1.ndim,          /* How many dimensions? */
-		{ A_rows, B_cols },  /* Number of elements for each dimension */
-		{ sizeof(float) * B_cols, sizeof(float) }  /* Strides for each dimension */
+		nullptr,           
+		sizeof(float),     
+		py::format_descriptor<float>::value, 
+		buf1.ndim,          
+		{ A_rows, B_cols },  
+		{ sizeof(float) * B_cols, sizeof(float) }  
 	));
 
 	auto buf3 = result.request();
